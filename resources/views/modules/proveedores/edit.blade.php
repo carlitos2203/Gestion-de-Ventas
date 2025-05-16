@@ -23,7 +23,7 @@
                 <label for="telefono">Telefono</label>
                 <input type="text" class="form-control" required name="telefono" id="telefono" value="{{ $item->telefono }}">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" required name="email" id="email" value="{{ $item->email }}">                
+                <input type="email" class="form-control" required name="email" id="email" value="{{ $item->email }}">
                 <label for="sitio_web">Sitio Web</label>
                 <input type="text" class="form-control" required name="sitio_web" id="sitio_web" value="{{ $item->sitio_web }}">
                 <label for="notas">Notas</label>

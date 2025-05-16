@@ -19,7 +19,7 @@
               <div class="card mb-3">
 
                 <div class="card-body">
-                  
+                  <img src="{{ asset('img/login.jpg') }}" alt="" class="img-fluid">
                   <div class="pt-4 pb-2">
                     <h5 class="card-title text-center pb-0 fs-4">Ingresa tu email y password para acceder</h5>
                     
@@ -27,16 +27,18 @@
                   <form class="row g-3 needs-validation" novalidate method="POST" action="{{ route('logear') }}">
                     @csrf
                     <div class="col-12">
-                      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                      <div class="input-group has-validation">
-                        <input type="text" name="email" class="form-control" id="email" required>
-                        <div class="invalid-feedback">Escribe tu correo</div>
-                      </div>
+                       <label for="email" class="form-label">Email</label>
+                         <div class="input-group has-validation">
+                           <input type="email" name="email" class="form-control" id="email" 
+                                    required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                         <div class="invalid-feedback">Ingrese un correo electrónico válido</div>
                     </div>
-                    <div class="col-12">
-                      <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                      <input type="password" name="password" class="form-control" id="password" required>
-                      <div class="invalid-feedback">Escribe tu contraseña!</div>
+                    </div>
+                        <div class="col-12">
+                        <label for="password" class="form-label">Password</label>
+                           <input type="password" name="password" class="form-control" id="password" 
+                                required minlength="8">
+                         <div class="invalid-feedback">La contraseña debe tener al menos 8 caracteres</div>
                     </div>
                     <div class="col-12">
                       <button class="btn btn-primary w-100" type="submit">Login</button>
@@ -57,7 +59,9 @@
                 </div>
               </div>
 
-             </div>
+             
+
+            </div>
           </div>
         </div>
 

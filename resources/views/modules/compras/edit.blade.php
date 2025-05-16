@@ -25,9 +25,6 @@
                 <label for="precio_compra">Precio de compra</label>
                 <input type="text" id="precio_compra" name="precio_compra" 
                 class="form-control" required value="{{ $item->precio_compra }}">
-                <label for="precio_compra">Precio de venta</label>
-                <input type="text" id="precio_venta" name="precio_venta" 
-                class="form-control" required value="{{ $item->precio_venta }}">
                 <button class="btn btn-warning mt-3">Actualizar</button>
                 <a href="{{ route("compras") }}" class="btn btn-info mt-3">
                     Cancelar

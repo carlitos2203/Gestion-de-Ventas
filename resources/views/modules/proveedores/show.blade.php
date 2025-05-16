@@ -24,9 +24,10 @@
                 <tr>
                   <th class="text-center">Nombre</th>
                   <th class="text-center">Telefono</th>
-                  <th class="text-center">Email</th>                 
+                  <th class="text-center">Email</th>
                   <th class="text-center">Sitio web</th>
                   <th class="text-center">Nota</th>
+                  
                 </tr>
               </thead>
               <tbody>

@@ -32,44 +32,58 @@ class Usuarios extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:users,name|regex:/^\S.*/',
-                'email' => 'required|email|max:255|unique:users,email|regex:/^[^\s]+@gmail\.com$/i',
-                'password' => 'required|string|min:8|regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
-                'rol' => 'required|in:admin,cajero',
-            ], [
-                'name.regex' => 'El nombre no puede comenzar con espacios.',
-                'email.regex' => 'Solo se permiten cuentas de Gmail (ejemplo@gmail.com)',
-                'password.regex' => 'La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo.',
-            ]);
-    
-            
-            User::create([
-                'name' => preg_replace('/^\s+/', '', $request->name),
-                'email' => preg_replace('/^\s+/', '', $request->email),
-                'password' => Hash::make($request->password),
-                'activo' => true,
-                'rol' => $request->rol
-            ]);
-    
-            return to_route('usuarios')->with('success', 'Usuario guardado con éxito!');
-            
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (Exception $e) {
-            return to_route('usuarios')->with('error', 'Error al guardar usuario: ' . $e->getMessage());
-        }
-    }
+{
+    try {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email:rfc,dns|max:255|unique:users,email',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
+            'rol' => 'required|in:admin,cajero'
+        ], [
+            'name.required' => 'El nombre es obligatorio',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.email' => 'Debe ingresar un correo electrónico válido',
+            'email.unique' => 'Este correo electrónico ya está registrado',
+            'password.required' => 'La contraseña es obligatoria',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres',
+            'password.confirmed' => 'Las contraseñas no coinciden',
+            'password.regex' => 'La contraseña debe contener al menos una mayúscula, un número y un carácter especial',
+            'rol.required' => 'El rol es obligatorio',
+            'rol.in' => 'Seleccione un rol válido'
+        ]);
 
-    
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'activo' => true,
+            'rol' => $validated['rol']
+        ]);
+
+        return to_route('usuarios')->with('success', 'Usuario guardado con éxito!');
+        
+    } catch (Exception $e) {
+        return to_route('usuarios.create')->with('error', 'Error al guardar usuario: ' . $e->getMessage())->withInput();
+    }
+}
+
+    /**
+     * Display the specified resource.
+     */
     public function show(string $id)
     {
         //
     }
 
-
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(string $id)
     {
         $item = User::find($id);
@@ -77,34 +91,40 @@ class Usuarios extends Controller
         return view('modules.usuarios.edit', compact('item', 'titulo'));
     }
 
-    
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, string $id)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:users,name,'.$id.'|regex:/^\S.*/',
-                'email' => 'required|email|max:255|unique:users,email,'.$id.'|regex:/^\S+@\S+\.\S+$/',
-                'rol' => 'required|in:admin,cajero',
-            ], [
-                'name.regex' => 'El nombre no puede comenzar con espacios.',
-                'email.regex' => 'El email no puede comenzar con espacios.',
-            ]);
-    
-            $item = User::find($id);
-            $item->name = preg_replace('/^\s+/', '', $request->name);
-            $item->email = preg_replace('/^\s+/', '', $request->email);
-            $item->rol = $request->rol;
-            $item->save();
-            
-            return to_route('usuarios')->with('success', 'Usuario actualizado con éxito!');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (Exception $e) {
-            return to_route('usuarios')->with('error', 'Error al actualizar usuario: ' . $e->getMessage());
-        }
-    }
+{
+    try {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email:rfc,dns|max:255|unique:users,email,'.$id,
+            'rol' => 'required|in:admin,cajero'
+        ], [
+            'name.required' => 'El nombre es obligatorio',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.email' => 'Debe ingresar un correo electrónico válido',
+            'email.unique' => 'Este correo electrónico ya está registrado',
+            'rol.required' => 'El rol es obligatorio',
+            'rol.in' => 'Seleccione un rol válido'
+        ]);
 
-   
+        $item = User::findOrFail($id);
+        $item->name = $validated['name'];
+        $item->email = $validated['email'];
+        $item->rol = $validated['rol'];
+        $item->save();
+
+        return to_route('usuarios')->with('success', 'Usuario actualizado con éxito!');
+    } catch (Exception $e) {
+        return back()->with('error', 'Error al actualizar usuario: ' . $e->getMessage())->withInput();
+    }
+}
+
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(string $id)
     {
         //
@@ -126,5 +146,6 @@ class Usuarios extends Controller
         $item->password = Hash::make($password);
         return $item->save();
     }
+    
 
 }

@@ -51,14 +51,12 @@ class Compras extends Controller
                 $item = Producto::find($request->id);
                 $item->cantidad = ($item->cantidad + $request->cantidad);
                 $item->precio_compra = $request->precio_compra;
-                $item->precio_venta = $request->precio_venta;
                 $item->save();
             }
             return to_route('productos')->with('success', 'Compra exitosa!');
         } catch (\Throwable $th) {
             return to_route('productos')->with('error', 'No pudo comprar!' . $th->getMessage());
         }
-        
     }
 
     /**

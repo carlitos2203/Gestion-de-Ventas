@@ -11,7 +11,7 @@
             </div>
             <div class="modal-body">
                 <input type="text"  id="id_usuario" name="id_usuario" hidden>
-                <label for="password">Password nuevo <span class="text-danger">*</span></label>
+                <label for="password">Password nuevo</label>
                 <input type="password" name="password" id="password" class="form-control" required>
             </div>
             <div class="modal-footer">

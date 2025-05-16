@@ -2,7 +2,8 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
-        <span class="d-none d-lg-block">GESTION DE ALMACEN Y VENTAS</span>
+        <img src="{{ asset('img/logo.jpg') }}" alt="">
+        <span class="d-none d-lg-block">Gestion de Almacen y Ventas</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->

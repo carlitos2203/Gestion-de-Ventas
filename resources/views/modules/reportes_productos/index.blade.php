@@ -14,11 +14,13 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Administrar Reportes De Productos</h5>
-          
+            <p>
+              Tipos de reportes del sistema para productos
+            </p>
             <div class="row">
               <div class="col text-end">
                 <a href="{{ route('reportes_productos.falta_stock') }}" class="btn btn-primary btn-sm">
-                  Productos con cantidad 10 o 0
+                  Productos con cantidad 1 o 0
                 </a>
               </div>
             </div>
@@ -31,6 +33,7 @@
                   <th class="text-start">Categoria</th>
                   <th class="text-start">Proveedor</th>
                   <th class="text-start">Nombre</th>
+                  <th class="text-start">Imagen</th>
                   <th class="text-start">Descripcion</th>
                   <th class="text-start">Cantidad</th>
                   <th class="text-start">Venta</th>
@@ -44,6 +47,9 @@
                     <td>{{ $item->nombre_categoria }} </td>
                     <td>{{ $item->nombre_proveedor }}</td>
                     <td>{{ $item->nombre }}</td>
+                    <td>
+                      <img src="{{ asset('storage/' . $item->imagen_producto) }}" alt="" width="60px" height="60px">
+                    </td>
                     <td>{{ $item->descripcion }}</td>
                     <td class="text-center">{{ $item->cantidad }}</td>
                     <td class="text-center">${{ $item->precio_compra }}</td>

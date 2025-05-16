@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class Proveedores extends Controller
 {
@@ -31,33 +33,44 @@ class Proveedores extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
+            'telefono' => 'required|numeric|digits_between:8,15',
+            'email' => 'required|email:rfc,dns|max:100',
+            'sitio_web' => 'nullable|url|max:255',
+            'notas' => 'nullable|string|max:500'
+        ], [
+            'nombre.required' => 'El nombre es obligatorio',
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios',
+            'nombre.max' => 'El nombre no debe exceder los 100 caracteres',
+            'telefono.required' => 'El teléfono es obligatorio',
+            'telefono.numeric' => 'El teléfono solo puede contener números',
+            'telefono.digits_between' => 'El teléfono debe tener entre 8 y 15 dígitos',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.email' => 'Debe ingresar un correo electrónico válido',
+            'email.max' => 'El correo no debe exceder los 100 caracteres',
+            'sitio_web.url' => 'Ingrese una URL válida para el sitio web',
+            'notas.max' => 'Las notas no deben exceder los 500 caracteres'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         try {
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255|unique:proveedores,nombre|regex:/^\S.*/',
-                'telefono' => 'required|string|max:20|regex:/^\+?\d+$/',
-                'email' => 'required|email|max:255|unique:users,email|regex:/^[^\s]+@gmail\.com$/i',
-                'sitio_web' => 'required|string|max:255|regex:/^\S.*/',
-                'notas' => 'nullable|string',
-            ], [
-                'nombre.regex' => 'El nombre no puede comenzar con espacios.',
-                'email.regex' => 'El email no puede comenzar con espacios.',
-                'sitio_web.regex' => 'El sitio web no puede comenzar con espacios.',
-            ]);
-    
-            // Eliminar espacios al inicio pero mantener al final
             $item = new Proveedor();
-            $item->nombre = preg_replace('/^\s+/', '', $request->nombre);
+            $item->nombre = $request->nombre;
             $item->telefono = $request->telefono;
-            $item->email = preg_replace('/^\s+/', '', $request->email);          
-            $item->sitio_web = preg_replace('/^\s+/', '', $request->sitio_web);
+            $item->email = $request->email;
+            $item->sitio_web = $request->sitio_web;
             $item->notas = $request->notas;
             $item->save();
             
             return to_route('proveedores')->with("success", "Proveedor agregado con éxito!");
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Throwable $th) {
-            return to_route('proveedores')->with("error", "Fallo al agregar proveedor: " . $th->getMessage());
+            return to_route('proveedores')->with("error", "Error al agregar proveedor: " . $th->getMessage());
         }
     }
 
@@ -86,32 +99,50 @@ class Proveedores extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
+            'telefono' => 'required|numeric|digits_between:8,15',
+            'email' => [
+                'required',
+                'email:rfc,dns',
+                'max:100',
+                Rule::unique('proveedores')->ignore($id)
+            ],
+            'sitio_web' => 'nullable|url|max:255',
+            'notas' => 'nullable|string|max:500'
+        ], [
+            'nombre.required' => 'El nombre es obligatorio',
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios',
+            'nombre.max' => 'El nombre no debe exceder los 100 caracteres',
+            'telefono.required' => 'El teléfono es obligatorio',
+            'telefono.numeric' => 'El teléfono solo puede contener números',
+            'telefono.digits_between' => 'El teléfono debe tener entre 8 y 15 dígitos',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.email' => 'Debe ingresar un correo electrónico válido',
+            'email.unique' => 'Este correo electrónico ya está registrado',
+            'email.max' => 'El correo no debe exceder los 100 caracteres',
+            'sitio_web.url' => 'Ingrese una URL válida para el sitio web',
+            'notas.max' => 'Las notas no deben exceder los 500 caracteres'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         try {
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255|unique:proveedores,nombre,'.$id.'|regex:/^\S.*/',
-                'telefono' => 'required|string|max:20|regex:/^\+?\d+$/',
-                'email' => 'required|email|max:255|unique:users,email,'.$id.'|regex:/^[^\s]+@gmail\.com$/i',
-                'sitio_web' => 'required|string|max:255|regex:/^\S.*/',
-                'notas' => 'nullable|string',
-            ], [
-                'nombre.regex' => 'El nombre no puede comenzar con espacios.',
-                'email.regex' => 'El email no puede comenzar con espacios.',
-                'sitio_web.regex' => 'El sitio web no puede comenzar con espacios.',
-            ]);
-    
             $item = Proveedor::find($id);
-            $item->nombre = preg_replace('/^\s+/', '', $request->nombre);
+            $item->nombre = $request->nombre;
             $item->telefono = $request->telefono;
-            $item->email = preg_replace('/^\s+/', '', $request->email);
-            $item->sitio_web = preg_replace('/^\s+/', '', $request->sitio_web);
+            $item->email = $request->email;
+            $item->sitio_web = $request->sitio_web;
             $item->notas = $request->notas;
             $item->save();
             
-            return to_route('proveedores')->with('success', 'Actualizado con éxito!');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
+            return to_route('proveedores')->with('success', 'Proveedor actualizado con éxito!');
         } catch (\Throwable $th) {
-            return to_route('proveedores')->with('error', 'No se pudo actualizar: ' . $th->getMessage());
+            return to_route('proveedores')->with('error', 'Error al actualizar proveedor: ' . $th->getMessage());
         }
     }
 
@@ -123,9 +154,9 @@ class Proveedores extends Controller
         try {
             $item = Proveedor::find($id);
             $item->delete();
-            return to_route('proveedores')->with('success', 'Proveedor Eliminado con exito!');
+            return to_route('proveedores')->with('success', 'Proveedor eliminado con éxito!');
         } catch (\Throwable $th) {
-            return to_route('proveedores')->with('error', 'Fallo al eliminar!!', $th->getMessage());
+            return to_route('proveedores')->with('error', 'Error al eliminar proveedor: ' . $th->getMessage());
         }
     }
 }

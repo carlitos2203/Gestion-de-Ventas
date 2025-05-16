@@ -22,8 +22,6 @@
                 <input type="text" class="form-control" required name="cantidad" id="cantidad">
                 <label for="precio_compra">Precio de compra</label>
                 <input type="text" id="precio_compra" name="precio_compra" class="form-control" required>
-                <label for="precio_venta">Precio de venta</label>
-                <input type="text" id="precio_venta" name="precio_venta" class="form-control" required>
                 <button class="btn btn-primary mt-3">Comprar</button>
                 <a href="{{ route("productos") }}" class="btn btn-info mt-3">
                     Cancelar

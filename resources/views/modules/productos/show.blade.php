@@ -26,11 +26,13 @@
                   <th class="text-center">Categoria</th>
                   <th class="text-center">Proveedor</th>
                   <th class="text-center">Nombre</th>
+                  <th class="text-center">Imagen</th>
                   <th class="text-center">Descripcion</th>
                   <th class="text-center">Cantidad</th>
                   <th class="text-center">Venta</th>
                   <th class="text-center">Compra</th>
-                  <th class="text-center">Activo</th>                  
+                  <th class="text-center">Activo</th>
+                  
                 </tr>
               </thead>
               <tbody>
@@ -39,6 +41,7 @@
                     <td>{{ $items->nombre_categoria }} </td>
                     <td>{{ $items->nombre_proveedor }}</td>
                     <td>{{ $items->nombre }}</td>
+                    <td></td>
                     <td>{{ $items->descripcion }}</td>
                     <td>{{ $items->cantidad }}</td>
                     <td>{{ $items->precio_compra }}</td>
